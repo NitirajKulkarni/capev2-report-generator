@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cape-report-generator"
+version = "1.0.0"
+description = "Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports with interactive GUI."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Nitiraj V. Kulkarni", email = "nitiraj@example.com"}
+]
+keywords = [
+    "capev2", "malware-analysis", "sandbox", "threat-intelligence", 
+    "pdf-reports", "cybersecurity", "c2-extraction", "mitre-attack"
+]
+dependencies = [
+    "reportlab>=4.0.0",
+    "pillow>=9.0.0",
+    "customtkinter>=5.2.0",
+    "darkdetect>=0.8.0"
+]
+
+[project.scripts]
+cape-report = "cape_report_generator.cli:run_cli"
+
+[project.urls]
+Homepage = "https://github.com/NitirajKulkarni/capev2-report-generator"
+Repository = "https://github.com/NitirajKulkarni/capev2-report-generator"
