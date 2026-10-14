@@ -56,10 +56,6 @@ def build_portable_exe():
 
     if os.path.isfile(built_path):
         shutil.copy2(built_path, release_path)
-        # Also copy to CAPE-Report-Generator.exe for backward compatibility
-        alt_name = "CAPE-Report-Generator.exe" if sys.platform.startswith("win") else "CAPE-Report-Generator"
-        shutil.copy2(built_path, os.path.join(RELEASES_DIR, alt_name))
-
         print(f"\n[+] SUCCESS! Portable executable generated (Zero-Console Window):")
         print(f"    Release Path: {release_path}")
         print(f"    File Size:    {os.path.getsize(release_path):,} bytes ({os.path.getsize(release_path)/(1024*1024):.1f} MB)")

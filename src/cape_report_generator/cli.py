@@ -51,22 +51,30 @@ def run_cli(args: Optional[List[str]] = None) -> int:
     parser.add_argument(
         "--analyst",
         default=default_analyst,
+        nargs="?",
+        const="",
         help="Name of the malware analyst (defaults to saved memory preference or blank)."
     )
     parser.add_argument(
         "--org",
         default=default_org,
+        nargs="?",
+        const="",
         help="Organization or SOC name (defaults to saved memory preference or blank)."
     )
     parser.add_argument(
         "--title",
         default=default_title,
+        nargs="?",
+        const=default_title,
         help="Report Title (defaults to saved memory preference)."
     )
     parser.add_argument(
         "--classification", "--tlp",
         dest="classification",
         default=default_cls,
+        nargs="?",
+        const="",
         help="Confidentiality marking or TLP protocol (e.g., TLP:AMBER, CONFIDENTIAL). Leave blank for white-label reports."
     )
     parser.add_argument(

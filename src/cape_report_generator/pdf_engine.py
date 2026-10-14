@@ -433,7 +433,6 @@ class CapePdfReport:
             sub_parts.append(f"Org: <b>{self._esc(self.org_name)}</b>")
         if self.analyst_name:
             sub_parts.append(f"Analyst: <b>{self._esc(self.analyst_name)}</b>")
-        sub_parts.append("Developed by Nitiraj Kulkarni")
 
         items.append(Paragraph(" | ".join(sub_parts), self.styles['ReportSubtitle']))
         items.append(HRFlowable(width="100%", thickness=1.5, color=SLATE_900, spaceAfter=4))
@@ -1059,7 +1058,7 @@ captured within an isolated virtual machine sandbox. Dynamic analysis reflects t
 artifact under specific environmental and temporal constraints. Evasive techniques, dormant timers, or target-dependent 
 triggers may alter behavior outside this sandbox environment. All indicators and credentials extracted should be handled 
 according to your organization's security procedures.<br/><br/>
-<b>capev2-report-generator</b> &bull; Developed by Nitiraj Kulkarni &bull; Open-Source Commercial Threat Intelligence Suite.
+<b>capev2-report-generator</b> &bull; Automated Sandbox Threat Intelligence &amp; Forensics Suite.
 """
         p_disc = Paragraph(text, ParagraphStyle(name='Disc', fontName='Helvetica', fontSize=7.5, leading=10, textColor=SLATE_500))
         box = Table([[p_disc]], colWidths=[504])
