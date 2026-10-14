@@ -17,15 +17,16 @@ BUILD_DIR = os.path.join(PROJECT_ROOT, "build")
 
 def build_portable_exe():
     print("=" * 70)
-    print("  Building CAPE-Report-Generator Portable Executable")
+    print("  Building capev2-report-generator Portable Executable (No-Console Native GUI)")
     print("=" * 70)
     os.makedirs(RELEASES_DIR, exist_ok=True)
 
-    # PyInstaller arguments
+    # PyInstaller arguments: --noconsole ensures no black terminal appears on double-click
     cmd = [
         sys.executable, "-m", "PyInstaller",
-        "--name=CAPE-Report-Generator",
+        "--name=capev2-report-generator",
         "--onefile",
+        "--noconsole",
         "--clean",
         f"--paths={SRC_DIR}",
         "--hidden-import=reportlab",
@@ -49,13 +50,17 @@ def build_portable_exe():
         return False
 
     # Move from dist/ to releases/
-    target_name = "CAPE-Report-Generator.exe" if sys.platform.startswith("win") else "CAPE-Report-Generator"
-    built_path = os.path.join(DIST_DIR, target_name)
-    release_path = os.path.join(RELEASES_DIR, target_name)
+    primary_name = "capev2-report-generator.exe" if sys.platform.startswith("win") else "capev2-report-generator"
+    built_path = os.path.join(DIST_DIR, primary_name)
+    release_path = os.path.join(RELEASES_DIR, primary_name)
 
     if os.path.isfile(built_path):
         shutil.copy2(built_path, release_path)
-        print(f"\n[+] SUCCESS! Portable executable generated:")
+        # Also copy to CAPE-Report-Generator.exe for backward compatibility
+        alt_name = "CAPE-Report-Generator.exe" if sys.platform.startswith("win") else "CAPE-Report-Generator"
+        shutil.copy2(built_path, os.path.join(RELEASES_DIR, alt_name))
+
+        print(f"\n[+] SUCCESS! Portable executable generated (Zero-Console Window):")
         print(f"    Release Path: {release_path}")
         print(f"    File Size:    {os.path.getsize(release_path):,} bytes ({os.path.getsize(release_path)/(1024*1024):.1f} MB)")
         return True

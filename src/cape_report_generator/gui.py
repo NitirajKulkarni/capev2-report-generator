@@ -40,7 +40,7 @@ class CapeReportGui:
         else:
             self.root = ctk.Tk()
 
-        self.root.title("CAPEv2 Malware Analysis Report Generator — Executive PDF Suite")
+        self.root.title("capev2-report-generator — Enterprise Threat Intelligence Suite")
         self.root.geometry("980x780")
         self.root.minsize(860, 680)
 
@@ -62,7 +62,7 @@ class CapeReportGui:
 
         title_lbl = ctk.CTkLabel(
             header_content,
-            text="CAPEv2 Sandbox Report Generator",
+            text="capev2-report-generator",
             font=ctk.CTkFont(family="Segoe UI", size=22, weight="bold"),
             text_color="#F8FAFC"
         )
@@ -70,7 +70,7 @@ class CapeReportGui:
 
         subtitle_lbl = ctk.CTkLabel(
             header_content,
-            text="Executive Malware Analysis & Threat Intelligence PDF Suite",
+            text="Executive Sandbox Threat Intelligence & Forensics Suite • Developed by Nitiraj Kulkarni",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color="#94A3B8"
         )
@@ -335,19 +335,22 @@ class CapeReportGui:
         about_box = ctk.CTkScrollableFrame(tab, fg_color=("#FFFFFF", "#1E293B"))
         about_box.pack(fill="both", expand=True, padx=12, pady=12)
 
-        ctk.CTkLabel(about_box, text="About CAPEv2 Report Generator", font=ctk.CTkFont(size=16, weight="bold")).pack(anchor="w", pady=(8, 4))
+        ctk.CTkLabel(about_box, text="capev2-report-generator", font=ctk.CTkFont(size=18, weight="bold")).pack(anchor="w", pady=(8, 4))
         desc = (
-            "CAPEv2 Report Generator is an executive malware reporting suite that transforms raw 30MB-100MB+ "
+            "capev2-report-generator is an executive malware reporting suite that transforms raw 30MB-100MB+ "
             "CAPEv2 sandbox JSON outputs into publication-grade, professionally indexed executive PDF reports.\n\n"
-            "Engineered for Security Operations Centers (SOC), Threat Intelligence Units, and Commercial Forensic Analysts."
+            "Developed by Nitiraj Kulkarni\n"
+            "Repository: https://github.com/NitirajKulkarni/capev2-report-generator"
         )
         ctk.CTkLabel(about_box, text=desc, font=ctk.CTkFont(size=12), justify="left", text_color="#CBD5E1").pack(anchor="w", pady=(0, 14))
 
         ctk.CTkLabel(about_box, text="Key Capabilities & In-Depth Extraction:", font=ctk.CTkFont(size=14, weight="bold")).pack(anchor="w", pady=(6, 4))
         caps = (
             "• Executive Summary: Analysis metadata, sandbox telemetry, duration, verdict, and threat rating gauge.\n"
+            "• Dynamic Interactive Table of Contents: Automatically excludes absent sections and features 100% accurate link jumping.\n"
+            "• Monospace Hashes & Checksums Block: Copyable cryptographic block formatted cleanly inside table borders.\n"
             "• CAPE Config Decryption: Automatic extraction and decryption of malware configurations (AgentTesla, RedLine, etc.) with C2 endpoints and credentials.\n"
-            "• Payload Extractions: Injected shellcodes, unpacked PEs, and memory dumps with cryptographic hashes.\n"
+            "• Exhaustive Payload Extractions: Injected shellcodes, unpacked PEs, and memory dumps with full cryptographic hashes.\n"
             "• MITRE ATT&CK Matrix: Maps observed dynamic behaviors to MITRE ATT&CK techniques and tactics.\n"
             "• Process Execution Hierarchy: Indented visual execution tree with parent-child PIDs, image paths, and command lines.\n"
             "• Defanged IOC Table: Automatic defanging of URLs, domains, and IP addresses ready for SOC/SIEM consumption.\n"

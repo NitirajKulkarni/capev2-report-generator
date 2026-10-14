@@ -28,8 +28,8 @@ def run_cli(args: Optional[List[str]] = None) -> int:
     default_cls = cfg.get("classification", "")
 
     parser = argparse.ArgumentParser(
-        prog="cape-report",
-        description="Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports.",
+        prog="capev2-report-generator",
+        description="capev2-report-generator: Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports. Developed by Nitiraj Kulkarni.",
         epilog="If run without arguments, launches the modern desktop GUI application."
     )
 

@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cape-report-generator"
+name = "capev2-report-generator"
 version = "1.0.0"
 description = "Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports with interactive GUI."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Nitiraj V. Kulkarni", email = "nitiraj@example.com"}
+    {name = "Nitiraj Kulkarni"}
 ]
 keywords = [
     "capev2", "malware-analysis", "sandbox", "threat-intelligence", 
@@ -24,6 +24,7 @@ dependencies = [
 ]
 
 [project.scripts]
+capev2-report = "cape_report_generator.cli:run_cli"
 cape-report = "cape_report_generator.cli:run_cli"
 
 [project.urls]

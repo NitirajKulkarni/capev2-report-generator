@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="cape-report-generator",
+    name="capev2-report-generator",
     version="1.0.0",
-    author="Nitiraj V. Kulkarni",
+    author="Nitiraj Kulkarni",
     description="Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports with interactive GUI.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -17,6 +17,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
+            "capev2-report=cape_report_generator.cli:run_cli",
             "cape-report=cape_report_generator.cli:run_cli",
         ],
     },

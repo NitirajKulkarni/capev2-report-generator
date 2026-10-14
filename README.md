@@ -1,13 +1,14 @@
-# CAPEv2 Sandbox Report Generator & Executive PDF Suite
+# capev2-report-generator
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![CAPEv2](https://img.shields.io/badge/CAPEv2-Sandbox%20Compatible-red.svg)](https://github.com/kevoreilly/CAPEv2)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-success.svg)]()
-[![Single-File Portable EXE](https://img.shields.io/badge/Release-Portable%20EXE-blueviolet.svg)](releases/CAPE-Report-Generator.exe)
+[![Single-File Portable EXE](https://img.shields.io/badge/Release-Portable%20EXE-blueviolet.svg)](releases/capev2-report-generator.exe)
 
 > **Enterprise-grade, publication-ready PDF reporting suite for CAPEv2 Sandbox analysis.**  
-> Automatically parses raw 30MB–100MB+ CAPEv2 JSON reports and transforms them into beautifully indexed, executive-level threat intelligence PDF reports with malware C2 extraction, MITRE ATT&CK® matrix, process trees, and defanged IOC tables.
+> Automatically parses raw 30MB–100MB+ CAPEv2 JSON reports and transforms them into beautifully indexed, executive-level threat intelligence PDF reports with malware C2 extraction, process execution trees, copyable cryptographic checksums, and defanged IOC tables.  
+> **Developed by Nitiraj Kulkarni**
 
 ---
 
@@ -16,9 +17,10 @@
 | Feature | Description |
 |---|---|
 | **🎨 Sleek Desktop GUI** | Modern dark-mode interface built with CustomTkinter. Drag-and-drop JSON reports, live threat inspector, and 1-click PDF viewing. |
-| **⚡ Standalone Portable EXE** | Ready-to-run zero-dependency executable (`releases/CAPE-Report-Generator.exe`). No Python installation required! |
+| **⚡ Standalone Native EXE** | Ready-to-run zero-dependency executable (`releases/capev2-report-generator.exe`). Built with native GUI subsystem (no black terminal window popup!). |
 | **💾 Persistent User Memory** | Remembers Analyst Name, Organization, Report Title, and Classification across sessions in `%APPDATA%\cape_report_generator\settings.json`. |
-| **📑 Clickable Table of Contents** | Interactive Page 1 Table of Contents with hyperlinked section anchors and native PDF outline bookmarks. |
+| **📑 Dynamic Clickable TOC** | Interactive Page 1 Table of Contents that automatically excludes absent sections, with 100% accurate link jumping directly to technical sections. |
+| **🔒 Monospace Hashes Block** | Copyable cryptographic checksum block (MD5, SHA-1, SHA-256, SHA-512, SSDEEP, TLSH) formatted cleanly within table borders. |
 | **🔍 In-Depth CAPE Extractions** | Decrypts and surfaces extracted malware configurations (AgentTesla, RedLine, Remcos, FormBook, etc.) including C2 servers, FTP credentials, and persistence files. |
 | **💯 Exhaustive Uncut Details** | Includes every extracted payload (no truncation), every monitored process, complete dynamic signatures, defanged network IOCs, dropped files, and behavioral registry keys. |
 | **🏷️ White-Label & Customizable** | Fully commercial: no forced vendor watermarks. Classification markings (TLP:AMBER, CONFIDENTIAL, etc.) are completely optional. |
@@ -153,7 +155,8 @@ cape-report-generator/
 ├── tests/
 │   └── test_parser_and_pdf.py      # Automated unit test suite
 └── releases/
-    └── CAPE-Report-Generator.exe   # Standalone portable single-file binary (23 MB)
+    ├── capev2-report-generator.exe # Standalone native single-file binary (Zero-console GUI)
+    └── CAPE-Report-Generator.exe   # Compatible binary alias
 ```
 
 ---
