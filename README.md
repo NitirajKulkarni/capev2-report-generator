@@ -155,8 +155,7 @@ cape-report-generator/
 ├── tests/
 │   └── test_parser_and_pdf.py      # Automated unit test suite
 └── releases/
-    ├── capev2-report-generator.exe # Standalone native single-file binary (Zero-console GUI)
-    └── CAPE-Report-Generator.exe   # Compatible binary alias
+    └── capev2-report-generator.exe # Standalone native single-file binary (Zero-console GUI)
 ```
 
 ---
