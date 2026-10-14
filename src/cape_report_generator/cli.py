@@ -12,13 +12,21 @@ from typing import List, Optional
 try:
     from .parser import parse_cape_report
     from .pdf_engine import generate_pdf_report
+    from .config import load_settings
 except ImportError:
     from parser import parse_cape_report
     from pdf_engine import generate_pdf_report
+    from config import load_settings
 
 
 def run_cli(args: Optional[List[str]] = None) -> int:
     """CLI handler for CAPEv2 Report Generator."""
+    cfg = load_settings()
+    default_analyst = cfg.get("analyst_name", "")
+    default_org = cfg.get("organization", "")
+    default_title = cfg.get("report_title", "CAPEv2 Sandbox Malware Analysis Report")
+    default_cls = cfg.get("classification", "")
+
     parser = argparse.ArgumentParser(
         prog="cape-report",
         description="Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports.",
@@ -42,19 +50,24 @@ def run_cli(args: Optional[List[str]] = None) -> int:
     )
     parser.add_argument(
         "--analyst",
-        default="Nitiraj V. Kulkarni",
-        help="Name of the lead malware analyst."
+        default=default_analyst,
+        help="Name of the malware analyst (defaults to saved memory preference or blank)."
     )
     parser.add_argument(
         "--org",
-        default="Quick Heal Security Labs",
-        help="Organization or security operations center name."
+        default=default_org,
+        help="Organization or SOC name (defaults to saved memory preference or blank)."
     )
     parser.add_argument(
-        "--tlp",
-        default="TLP:AMBER",
-        choices=["TLP:CLEAR", "TLP:WHITE", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED"],
-        help="Traffic Light Protocol (TLP) confidentiality marking."
+        "--title",
+        default=default_title,
+        help="Report Title (defaults to saved memory preference)."
+    )
+    parser.add_argument(
+        "--classification", "--tlp",
+        dest="classification",
+        default=default_cls,
+        help="Confidentiality marking or TLP protocol (e.g., TLP:AMBER, CONFIDENTIAL). Leave blank for white-label reports."
     )
     parser.add_argument(
         "--gui",
@@ -84,9 +97,10 @@ def run_cli(args: Optional[List[str]] = None) -> int:
         return 1
 
     options = {
-        "analyst": parsed.analyst,
-        "organization": parsed.org,
-        "tlp": parsed.tlp,
+        "analyst": parsed.analyst.strip() if parsed.analyst else "",
+        "organization": parsed.org.strip() if parsed.org else "",
+        "report_title": parsed.title.strip() if parsed.title else default_title,
+        "classification": parsed.classification.strip() if parsed.classification else "",
     }
 
     # Batch mode

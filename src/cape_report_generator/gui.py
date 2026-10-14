@@ -22,9 +22,11 @@ except ImportError:
 try:
     from .parser import parse_cape_report, CapeReportData
     from .pdf_engine import generate_pdf_report
+    from .config import load_settings, save_settings
 except ImportError:
     from parser import parse_cape_report, CapeReportData
     from pdf_engine import generate_pdf_report
+    from config import load_settings, save_settings
 
 
 class CapeReportGui:
@@ -39,9 +41,10 @@ class CapeReportGui:
             self.root = ctk.Tk()
 
         self.root.title("CAPEv2 Malware Analysis Report Generator — Executive PDF Suite")
-        self.root.geometry("980x760")
+        self.root.geometry("980x780")
         self.root.minsize(860, 680)
 
+        self.settings = load_settings()
         self.current_report_data: Optional[CapeReportData] = None
         self.current_json_path: str = ""
         self.last_generated_pdf: str = ""
@@ -67,7 +70,7 @@ class CapeReportGui:
 
         subtitle_lbl = ctk.CTkLabel(
             header_content,
-            text="Executive Malware Analysis & Threat Intelligence PDF Suite  |  By Nitiraj V. Kulkarni — Quick Heal Security Labs",
+            text="Executive Malware Analysis & Threat Intelligence PDF Suite",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color="#94A3B8"
         )
@@ -152,44 +155,82 @@ class CapeReportGui:
         self.insp_grid = ctk.CTkFrame(self.insp_content, fg_color="transparent")
         self.insp_grid.pack(fill="x", pady=(8, 0))
 
-        # 3. Report Customization Settings
+        # 3. Report Customization Settings (Saved in memory)
         opts_frame = ctk.CTkFrame(tab, fg_color=("#FFFFFF", "#1E293B"), corner_radius=8, border_width=1, border_color="#334155")
         opts_frame.pack(fill="x", padx=12, pady=6)
 
         opts_inner = ctk.CTkFrame(opts_frame, fg_color="transparent")
         opts_inner.pack(fill="x", padx=14, pady=12)
 
-        ctk.CTkLabel(opts_inner, text="Report Metadata & Customization", font=ctk.CTkFont(size=13, weight="bold")).pack(anchor="w", pady=(0, 8))
+        opts_header = ctk.CTkFrame(opts_inner, fg_color="transparent")
+        opts_header.pack(fill="x", pady=(0, 8))
+        ctk.CTkLabel(opts_header, text="Report Customization & Metadata", font=ctk.CTkFont(size=13, weight="bold")).pack(side="left")
+
+        save_btn = ctk.CTkButton(
+            opts_header,
+            text="💾 Remember Preferences",
+            width=160,
+            height=26,
+            font=ctk.CTkFont(size=11),
+            fg_color="#334155",
+            hover_color="#475569",
+            command=self._on_save_preferences
+        )
+        save_btn.pack(side="right")
 
         row1 = ctk.CTkFrame(opts_inner, fg_color="transparent")
         row1.pack(fill="x", pady=4)
 
         ctk.CTkLabel(row1, text="Analyst Name:", width=110, anchor="w").pack(side="left")
-        self.analyst_var = ctk.StringVar(value="Nitiraj V. Kulkarni")
-        ctk.CTkEntry(row1, textvariable=self.analyst_var, width=280).pack(side="left", padx=(0, 20))
+        self.analyst_var = ctk.StringVar(value=self.settings.get("analyst_name", ""))
+        self.analyst_entry = ctk.CTkEntry(row1, textvariable=self.analyst_var, placeholder_text="e.g. Lead Malware Analyst", width=280)
+        self.analyst_entry.pack(side="left", padx=(0, 20))
 
         ctk.CTkLabel(row1, text="Organization:", width=90, anchor="w").pack(side="left")
-        self.org_var = ctk.StringVar(value="Quick Heal Security Labs")
-        ctk.CTkEntry(row1, textvariable=self.org_var, width=280).pack(side="left")
+        self.org_var = ctk.StringVar(value=self.settings.get("organization", ""))
+        self.org_entry = ctk.CTkEntry(row1, textvariable=self.org_var, placeholder_text="e.g. Cyber Security Incident Response", width=280)
+        self.org_entry.pack(side="left")
 
         row2 = ctk.CTkFrame(opts_inner, fg_color="transparent")
         row2.pack(fill="x", pady=6)
 
-        ctk.CTkLabel(row2, text="TLP Marking:", width=110, anchor="w").pack(side="left")
-        self.tlp_var = ctk.StringVar(value="TLP:AMBER")
+        ctk.CTkLabel(row2, text="Report Title:", width=110, anchor="w").pack(side="left")
+        self.report_title_var = ctk.StringVar(value=self.settings.get("report_title", "CAPEv2 Sandbox Malware Analysis Report"))
+        self.report_title_entry = ctk.CTkEntry(row2, textvariable=self.report_title_var, width=280)
+        self.report_title_entry.pack(side="left", padx=(0, 20))
+
+        ctk.CTkLabel(row2, text="Classification:", width=90, anchor="w").pack(side="left")
+        saved_cls = self.settings.get("classification", "")
+        self.tlp_var = ctk.StringVar(value=saved_cls if saved_cls else "(None / White Label)")
+        classification_options = [
+            "(None / White Label)",
+            "TLP:CLEAR",
+            "TLP:GREEN",
+            "TLP:AMBER",
+            "TLP:AMBER+STRICT",
+            "TLP:RED",
+            "CONFIDENTIAL",
+            "RESTRICTED",
+            "INTERNAL ONLY"
+        ]
+        if self.tlp_var.get() not in classification_options:
+            classification_options.append(self.tlp_var.get())
         self.tlp_dropdown = ctk.CTkOptionMenu(
             row2,
             variable=self.tlp_var,
-            values=["TLP:CLEAR", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED"],
-            width=150
+            values=classification_options,
+            width=200
         )
-        self.tlp_dropdown.pack(side="left", padx=(0, 20))
+        self.tlp_dropdown.pack(side="left")
 
-        ctk.CTkLabel(row2, text="Output Folder:", width=90, anchor="w").pack(side="left")
-        self.out_dir_var = ctk.StringVar()
-        self.out_dir_entry = ctk.CTkEntry(row2, textvariable=self.out_dir_var, placeholder_text="Default (Same folder as JSON)", width=320)
-        self.out_dir_entry.pack(side="left", padx=(0, 8))
-        ctk.CTkButton(row2, text="Browse...", width=80, command=self._on_browse_out_dir).pack(side="left")
+        row3 = ctk.CTkFrame(opts_inner, fg_color="transparent")
+        row3.pack(fill="x", pady=(4, 0))
+
+        ctk.CTkLabel(row3, text="Output Folder:", width=110, anchor="w").pack(side="left")
+        self.out_dir_var = ctk.StringVar(value=self.settings.get("output_dir", ""))
+        self.out_dir_entry = ctk.CTkEntry(row3, textvariable=self.out_dir_var, placeholder_text="Default (Same folder as JSON report)", width=480)
+        self.out_dir_entry.pack(side="left", padx=(0, 8), fill="x", expand=True)
+        ctk.CTkButton(row3, text="Browse...", width=80, command=self._on_browse_out_dir).pack(side="left")
 
         # 4. Action Section
         action_frame = ctk.CTkFrame(tab, fg_color="transparent")
@@ -298,7 +339,7 @@ class CapeReportGui:
         desc = (
             "CAPEv2 Report Generator is an executive malware reporting suite that transforms raw 30MB-100MB+ "
             "CAPEv2 sandbox JSON outputs into publication-grade, professionally indexed executive PDF reports.\n\n"
-            "Developed by Nitiraj V. Kulkarni — AI Safety & Cybersecurity Researcher, Quick Heal Security Labs."
+            "Engineered for Security Operations Centers (SOC), Threat Intelligence Units, and Commercial Forensic Analysts."
         )
         ctk.CTkLabel(about_box, text=desc, font=ctk.CTkFont(size=12), justify="left", text_color="#CBD5E1").pack(anchor="w", pady=(0, 14))
 
@@ -315,6 +356,41 @@ class CapeReportGui:
         )
         ctk.CTkLabel(about_box, text=caps, font=ctk.CTkFont(size=11), justify="left", text_color="#94A3B8").pack(anchor="w", pady=(0, 14))
 
+    # ─── Settings Persistence & Helpers ──────────────────────────────────────
+
+    def _on_save_preferences(self):
+        """Manually save user preferences into persistent memory."""
+        self._persist_settings()
+        self.status_lbl.configure(text="Preferences saved into memory.")
+        messagebox.showinfo("Preferences Saved", "Your Analyst Name, Organization, Report Title, and Classification preferences have been remembered.")
+
+    def _persist_settings(self):
+        """Save form fields to persistent settings."""
+        cls_val = self.tlp_var.get().strip()
+        if cls_val in ("(None / White Label)", "None"):
+            cls_val = ""
+        cfg = {
+            "analyst_name": self.analyst_var.get().strip(),
+            "organization": self.org_var.get().strip(),
+            "report_title": self.report_title_var.get().strip() or "CAPEv2 Sandbox Malware Analysis Report",
+            "classification": cls_val,
+            "output_dir": self.out_dir_var.get().strip(),
+        }
+        save_settings(cfg)
+
+    def _get_report_options(self) -> dict:
+        """Collect current report configuration and update persistent memory."""
+        self._persist_settings()
+        cls_val = self.tlp_var.get().strip()
+        if cls_val in ("(None / White Label)", "None"):
+            cls_val = ""
+        return {
+            "analyst": self.analyst_var.get().strip(),
+            "organization": self.org_var.get().strip(),
+            "report_title": self.report_title_var.get().strip() or "CAPEv2 Sandbox Malware Analysis Report",
+            "classification": cls_val,
+        }
+
     # ─── Event Handlers ──────────────────────────────────────────────────────
 
     def _on_browse_json(self):
@@ -330,6 +406,7 @@ class CapeReportGui:
         folder = filedialog.askdirectory(title="Select Output Folder")
         if folder:
             self.out_dir_var.set(folder)
+            self._persist_settings()
 
     def _on_browse_batch_dir(self):
         folder = filedialog.askdirectory(title="Select Reports Folder")
@@ -393,11 +470,7 @@ class CapeReportGui:
         base_name = os.path.splitext(os.path.basename(json_path))[0]
         out_pdf = os.path.join(out_dir, f"{base_name}_Analysis_Report.pdf")
 
-        options = {
-            "analyst": self.analyst_var.get().strip() or "Nitiraj V. Kulkarni",
-            "organization": self.org_var.get().strip() or "Quick Heal Security Labs",
-            "tlp": self.tlp_var.get().strip() or "TLP:AMBER",
-        }
+        options = self._get_report_options()
 
         self.gen_btn.configure(state="disabled", text="⏳ Rendering PDF Document...")
         self.progress_bar.pack(fill="x", padx=12, pady=(8, 4))
@@ -471,11 +544,7 @@ class CapeReportGui:
         self.batch_log.delete("1.0", "end")
         self.batch_log.insert("end", f"Starting batch conversion of {len(json_files)} reports in:\n{target_dir}\n" + "=" * 65 + "\n")
 
-        options = {
-            "analyst": self.analyst_var.get().strip() or "Nitiraj V. Kulkarni",
-            "organization": self.org_var.get().strip() or "Quick Heal Security Labs",
-            "tlp": self.tlp_var.get().strip() or "TLP:AMBER",
-        }
+        options = self._get_report_options()
 
         def worker():
             success = 0

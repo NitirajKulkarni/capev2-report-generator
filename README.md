@@ -17,29 +17,42 @@
 |---|---|
 | **🎨 Sleek Desktop GUI** | Modern dark-mode interface built with CustomTkinter. Drag-and-drop JSON reports, live threat inspector, and 1-click PDF viewing. |
 | **⚡ Standalone Portable EXE** | Ready-to-run zero-dependency executable (`releases/CAPE-Report-Generator.exe`). No Python installation required! |
+| **💾 Persistent User Memory** | Remembers Analyst Name, Organization, Report Title, and Classification across sessions in `%APPDATA%\cape_report_generator\settings.json`. |
+| **📑 Clickable Table of Contents** | Interactive Page 1 Table of Contents with hyperlinked section anchors and native PDF outline bookmarks. |
 | **🔍 In-Depth CAPE Extractions** | Decrypts and surfaces extracted malware configurations (AgentTesla, RedLine, Remcos, FormBook, etc.) including C2 servers, FTP credentials, and persistence files. |
-| **📑 Two-Pass Numbered Index** | Professional Table of Contents and running `Page X of Y` headers and footers with customizable confidentiality tags (TLP:AMBER, TLP:RED). |
-| **🎯 MITRE ATT&CK® Mapping** | Maps observed dynamic behaviors to MITRE ATT&CK techniques, tactics, and high-severity signatures. |
-| **🌲 Process Hierarchy Tree** | Clean parent-child execution tree detailing PIDs, PPIDs, module paths, and command-line arguments. |
-| **🛡️ Defanged Network IOCs** | Automatically defangs URLs (`hxxp://`), FTP (`fxp://`), and domains (`[.]`) ready for direct SIEM, EDR, and firewall ingestion. |
+| **💯 Exhaustive Uncut Details** | Includes every extracted payload (no truncation), every monitored process, complete dynamic signatures, defanged network IOCs, dropped files, and behavioral registry keys. |
+| **🏷️ White-Label & Customizable** | Fully commercial: no forced vendor watermarks. Classification markings (TLP:AMBER, CONFIDENTIAL, etc.) are completely optional. |
 | **🚀 Batch Conversion** | Convert entire directories of analysis JSON reports in parallel with progress tracking. |
 | **💻 Universal CLI & GUI** | Seamlessly works as both an interactive desktop application and a headless automation CLI tool. |
 
 ---
 
-## 📸 Executive PDF Report Preview
+## 📸 Executive PDF Report Structure
 
 Each generated report is styled using an executive cybersecurity design system (Midnight Slate, Crimson Threat Warnings, and Emerald Status Badges):
 
-1. **Cover & Threat Verdict Banner**: Malscore gauge, malware family tag, and verdict classification (`MALICIOUS`, `SUSPICIOUS`, `CLEAN`).
-2. **Table of Contents (Index)**: Interactive structured section navigation.
-3. **Executive Summary & Metadata**: Analysis ID, duration, sandbox VM environment, and analyst credentials.
-4. **Target File Identification & Hashes**: Monospace cryptographic table (MD5, SHA-1, SHA-256, SSDEEP, TLSH) plus YARA and Antivirus matches.
-5. **CAPE Payload & Configuration Extraction**: Dedicated credential card showing decrypted C2 servers, usernames, passwords, and unpacked shellcodes.
-6. **MITRE ATT&CK & Signatures**: Tactics and techniques observed during sandbox execution.
-7. **Process Execution Hierarchy**: Parent-child execution relationships with command lines.
-8. **Network Communications & Defanged IOCs**: Safe Indicators of Compromise for threat hunting.
-9. **Behavioral Summary & Dropped Files**: Files written, modified registry keys, mutexes, and dropped artifacts.
+1. **Page 1: Executive Overview & Interactive Index**:
+   - Threat Verdict Banner (`MALICIOUS`, `SUSPICIOUS`, `CLEAN`) with numeric risk score gauge.
+   - Sample Analysis Metadata Card (Sample Name, Size, File Type, Package, Analysis ID, Detonation Duration).
+   - **Interactive Clickable Table of Contents**: Clicking any section jumps straight to that technical section in the PDF.
+2. **Section 1: Target Sample Identification & Cryptographic Hashes**:
+   - Complete cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512, SSDEEP, TLSH, CRC32, RH-Hash, SHA3-384) + YARA matches.
+3. **Section 2: CAPE Advanced Payload & Configuration Extraction**:
+   - Decrypted C2 configuration cards (e.g. AgentTesla FTP credentials, ports, persistence) + Complete Payload Dumps table.
+4. **Section 3: MITRE ATT&CK® Matrix & Dynamic Behavioral Signatures**:
+   - Observed tactics, techniques, and severity-scored dynamic behavioral detections.
+5. **Section 4: Process Execution Hierarchy & Monitored Processes**:
+   - Complete execution hierarchy tree detailing PIDs, PPIDs, image paths, and command-line arguments.
+6. **Section 5: Network Communications & Defanged IOCs**:
+   - Defanged DNS domains, HTTP/HTTPS URLs, and TCP/UDP connections for safe SOC/SIEM threat hunting.
+7. **Section 6: File System & Registry Behavioral Modifications**:
+   - Persistence keys (Run, RunOnce), security evasion keys, files written, and deleted artifacts.
+8. **Section 7: Dropped Files & Extracted Artifacts**:
+   - Names, paths, sizes, and types of all dropped files.
+9. **Section 8: Sandbox Telemetry & Execution Statistics**:
+   - Machine environment, OS architecture, network routing, and module execution times.
+10. **Section 9: Analytical Methodology & Disclaimer**:
+   - Formal analytical notice for enterprise forensic documentation.
 
 ---
 
@@ -84,7 +97,7 @@ cape-report
 #### 3. Run Headless via CLI
 ```bash
 # Convert a single report:
-cape-report 11_report.json -o 11_report.pdf --analyst "Nitiraj V. Kulkarni" --org "Quick Heal Security Labs"
+cape-report 11_report.json -o 11_report.pdf --analyst "Lead Analyst" --org "Cyber Defense Center"
 
 # Convert all reports in a folder (Batch Mode):
 cape-report --batch /path/to/cape_reports/ -o /path/to/output_pdfs/
@@ -96,7 +109,7 @@ cape-report --batch /path/to/cape_reports/ -o /path/to/output_pdfs/
 
 ```text
 usage: cape-report [-h] [-o OUTPUT] [--batch] [--analyst ANALYST] [--org ORG]
-                   [--tlp {TLP:CLEAR,TLP:WHITE,TLP:GREEN,TLP:AMBER,TLP:AMBER+STRICT,TLP:RED}]
+                   [--title TITLE] [--classification CLASSIFICATION]
                    [--gui] [json_path]
 
 Convert CAPEv2 Sandbox JSON analysis reports into publication-grade executive PDF reports.
@@ -108,9 +121,11 @@ options:
   -h, --help            show this help message and exit
   -o, --output OUTPUT   Custom output PDF path or output directory
   --batch               Treat json_path as a directory and convert all *.json reports
-  --analyst ANALYST     Name of the lead malware analyst (Default: Nitiraj V. Kulkarni)
-  --org ORG             Organization or SOC lab name (Default: Quick Heal Security Labs)
-  --tlp {TLP:CLEAR,...} Traffic Light Protocol confidentiality marking (Default: TLP:AMBER)
+  --analyst ANALYST     Name of the malware analyst (defaults to saved memory preference or blank)
+  --org ORG             Organization or SOC lab name (defaults to saved memory preference or blank)
+  --title TITLE         Report Title (defaults to saved memory preference)
+  --classification CLASSIFICATION
+                        Confidentiality marking or TLP protocol (optional, e.g. TLP:AMBER, CONFIDENTIAL). Leave blank for white-label reports
   --gui                 Explicitly launch the desktop Graphical User Interface
 ```
 
@@ -130,12 +145,13 @@ cape-report-generator/
 │   └── cape_report_generator/
 │       ├── __init__.py             # Package init & version metadata
 │       ├── __main__.py             # Entry point for python -m
-│       ├── parser.py               # Memory-efficient CAPEv2 JSON parser
-│       ├── pdf_engine.py           # ReportLab publication-grade PDF generator
+│       ├── config.py               # Persistent user settings manager (%APPDATA%)
+│       ├── parser.py               # Memory-efficient CAPEv2 JSON parser (exhaustive extraction)
+│       ├── pdf_engine.py           # Publication-grade PDF engine with clickable TOC & bookmarks
 │       ├── gui.py                  # CustomTkinter dark-mode desktop GUI
 │       └── cli.py                  # Headless command-line interface
 ├── tests/
-│   └── test_parser_and_pdf.py      # Automated unit test suite (6/6 passing)
+│   └── test_parser_and_pdf.py      # Automated unit test suite
 └── releases/
     └── CAPE-Report-Generator.exe   # Standalone portable single-file binary (23 MB)
 ```
@@ -149,14 +165,6 @@ Run the full automated test suite:
 ```bash
 python -m unittest discover tests
 ```
-
----
-
-## 👤 Author & Research Attribution
-
-**Nitiraj V. Kulkarni**  
-*AI Safety & Cybersecurity Researcher*  
-Quick Heal Security Labs / CAPEv2 Sandbox Automation  
 
 ---
 
